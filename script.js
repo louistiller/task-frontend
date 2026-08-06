@@ -74,6 +74,9 @@ actions.appendChild(editButton);
         listItem.prepend(completeCheckbox);
         listItem.appendChild(actions);
         taskList.appendChild(listItem);
+        deleteButton.classList.add("delete-button");
+editButton.classList.add("edit-button");
+actions.classList.add("actions");
     }
 
     console.log(page.content);
