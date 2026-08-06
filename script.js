@@ -1,21 +1,39 @@
-const API_URL= "http://localhost:8080/tasks";
+const API_URL= "http://localhost:8080/tasks?size=50";
+const taskList = document.getElementById("taskList");
+const addButton = document.getElementById("addButton")
+const taskTitle= document.getElementById("taskTitle");
+
+async function addTask(){const title= taskTitle.value;
+    const response=await fetch(API_URL, {
+        method: "POST",
+    headers:{"Content-Type":"application/json"}, 
+body: JSON.stringify({title: title})});
+console.log(response.status);
+if(response.ok){
+taskTitle.value="";
+await loadTasks()
+}
+}
+addButton.addEventListener("click", addTask);
+
 
 async function loadTasks() {
 
-    const response = await fetch(API_URL);
+    const response = await fetch(API_URL, {
+    cache: "no-store"
+});
 
     const page = await response.json();
 
-    const taskList = document.getElementById("taskList");
+    taskList.innerHTML="";
 
-    const listItem = document.createElement("li");
-
-    listItem.textContent = page.content[0].title;
-
-    taskList.appendChild(listItem);
+    for(const task of page.content){
+        const listItem = document.createElement("li");
+        listItem.textContent= task.title;
+        taskList.appendChild(listItem);
+    }
 
     console.log(page.content);
 
 }
-
 loadTasks();
