@@ -1,4 +1,4 @@
-const API_URL= "http://localhost:8080/tasks?size=50";
+const API_URL = "https://task-api-u38p.onrender.com/tasks?size=50";
 const taskList = document.getElementById("taskList");
 const addButton = document.getElementById("addButton")
 const taskTitle= document.getElementById("taskTitle");
