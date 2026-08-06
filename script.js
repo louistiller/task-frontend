@@ -46,6 +46,9 @@ async function loadTasks() {
 
     for(const task of page.content){
         const listItem = document.createElement("li");
+        listItem.classList.add("task");
+if (task.completed) {
+    listItem.classList.add("completed");}
         listItem.textContent= task.title;
         const deleteButton = document.createElement("button");
         deleteButton.textContent = "Löschen";
@@ -64,9 +67,12 @@ const newTitle = prompt("Neuer Titel:", task.title);
         updateTask(task.id, newTitle.trim(), task.completed);
     }
 });
-        listItem.appendChild(deleteButton);
+
+const actions= document.createElement("div");
+actions.appendChild(deleteButton);
+actions.appendChild(editButton);
         listItem.prepend(completeCheckbox);
-        listItem.appendChild(editButton);
+        listItem.appendChild(actions);
         taskList.appendChild(listItem);
     }
 
