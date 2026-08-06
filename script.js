@@ -46,17 +46,27 @@ async function loadTasks() {
 
     for(const task of page.content){
         const listItem = document.createElement("li");
-        listItem.textContent= task.title +", "+ task.completed;
+        listItem.textContent= task.title;
         const deleteButton = document.createElement("button");
         deleteButton.textContent = "Löschen";
         deleteButton.addEventListener("click", () => deleteTask(task.id));
-        const completeButton= document.createElement("button");
-        completeButton.textContent= "Erledigt";
-        completeButton.addEventListener("click", function(){
-            updateTask(task.id, task.title, !task.completed);
+        const completeCheckbox= document.createElement("input");
+        completeCheckbox.type= "checkbox";
+        completeCheckbox.checked = task.completed;
+        completeCheckbox.addEventListener("change", function(){
+            updateTask(task.id, task.title, completeCheckbox.checked);
         })
+        const editButton = document.createElement("button");
+editButton.textContent = "Bearbeiten";
+editButton.addEventListener("click", function () {
+const newTitle = prompt("Neuer Titel:", task.title);
+ if (newTitle !== null && newTitle.trim() !== "") {
+        updateTask(task.id, newTitle.trim(), task.completed);
+    }
+});
         listItem.appendChild(deleteButton);
-        listItem.appendChild(completeButton);
+        listItem.prepend(completeCheckbox);
+        listItem.appendChild(editButton);
         taskList.appendChild(listItem);
     }
 
