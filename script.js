@@ -1,11 +1,23 @@
-const API_URL = "https://task-api-u38p.onrender.com/tasks";
+const API_URL_ONLINE = "https://task-api-u38p.onrender.com/tasks";
+const API_URL_LOCAL = "http://localhost:8080/tasks";
+const local =false;
+const API_URL = local ? API_URL_LOCAL : API_URL_ONLINE;
 const taskList = document.getElementById("taskList");
 const addButton = document.getElementById("addButton")
 const taskTitle= document.getElementById("taskTitle");
 const allButton = document.getElementById("allButton");
 const openButton = document.getElementById("openButton");
 const completedButton = document.getElementById("completedButton");
+const searchInput = document.getElementById("searchInput");
+const searchButton = document.getElementById("searchButton");
 let currentFilter= "all";
+let currentSearch="";
+
+searchButton.addEventListener("click", function () {
+    currentSearch=searchInput.value.toLowerCase();
+        loadTasks();
+    
+});
 
 allButton.classList.add("active");
 
@@ -82,6 +94,8 @@ async function loadTasks() {
 
     let tasks= page.content;
 
+    const searchText=searchInput.value.toLowerCase();
+
     if (currentFilter === "open") {
     tasks = tasks.filter(task => !task.completed);
 }
@@ -89,6 +103,9 @@ async function loadTasks() {
 if (currentFilter === "completed") {
     tasks = tasks.filter(task => task.completed);
 }
+
+if(currentSearch !== ""){
+tasks= tasks.filter(task=> task.title.toLowerCase().includes(searchText));}
 
     for(const task of tasks){
         const listItem = document.createElement("li");

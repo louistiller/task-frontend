@@ -119,3 +119,7 @@ background-color: #2563eb;
     background-color: #2563eb;
     color: white;
 }
+
+#searchInput{
+    flex:1
+}
