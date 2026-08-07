@@ -104,3 +104,18 @@ background-color: #2563eb;
 .edit-button:hover {
     background-color: #d1d5db;
 }
+
+.filters {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.filters button {
+    background-color: #e5e7eb;
+}
+
+.filters button.active {
+    background-color: #2563eb;
+    color: white;
+}

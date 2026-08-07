@@ -2,6 +2,42 @@ const API_URL = "https://task-api-u38p.onrender.com/tasks";
 const taskList = document.getElementById("taskList");
 const addButton = document.getElementById("addButton")
 const taskTitle= document.getElementById("taskTitle");
+const allButton = document.getElementById("allButton");
+const openButton = document.getElementById("openButton");
+const completedButton = document.getElementById("completedButton");
+let currentFilter= "all";
+
+allButton.classList.add("active");
+
+allButton.addEventListener("click", function () {
+    currentFilter = "all";
+
+    allButton.classList.add("active");
+    openButton.classList.remove("active");
+    completedButton.classList.remove("active");
+
+    loadTasks();
+});
+
+openButton.addEventListener("click", function () {
+    currentFilter = "open";
+
+    allButton.classList.remove("active");
+    openButton.classList.add("active");
+    completedButton.classList.remove("active");
+
+    loadTasks();
+});
+
+completedButton.addEventListener("click", function () {
+    currentFilter = "completed";
+
+    allButton.classList.remove("active");
+    openButton.classList.remove("active");
+    completedButton.classList.add("active");
+
+    loadTasks();
+});
 
 async function addTask(){const title= taskTitle.value;
     const response=await fetch(API_URL, {
@@ -44,7 +80,17 @@ async function loadTasks() {
 
     taskList.innerHTML = "";
 
-    for(const task of page.content){
+    let tasks= page.content;
+
+    if (currentFilter === "open") {
+    tasks = tasks.filter(task => !task.completed);
+}
+
+if (currentFilter === "completed") {
+    tasks = tasks.filter(task => task.completed);
+}
+
+    for(const task of tasks){
         const listItem = document.createElement("li");
         listItem.classList.add("task");
 if (task.completed) {
