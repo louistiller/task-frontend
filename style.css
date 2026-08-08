@@ -123,3 +123,11 @@ background-color: #2563eb;
 #searchInput{
     flex:1
 }
+
+#sortSelect {
+    padding: 8px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    width: 120px;
+}

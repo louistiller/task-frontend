@@ -10,6 +10,7 @@ const openButton = document.getElementById("openButton");
 const completedButton = document.getElementById("completedButton");
 const searchInput = document.getElementById("searchInput");
 const searchButton = document.getElementById("searchButton");
+const sortSelect= document.getElementById("sortSelect");
 let currentFilter= "all";
 let currentSearch="";
 
@@ -17,6 +18,10 @@ searchButton.addEventListener("click", function () {
     currentSearch=searchInput.value.toLowerCase();
         loadTasks();
     
+});
+
+sortSelect.addEventListener("change", function () {
+    loadTasks();
 });
 
 allButton.classList.add("active");
@@ -102,6 +107,24 @@ async function loadTasks() {
 
 if (currentFilter === "completed") {
     tasks = tasks.filter(task => task.completed);
+}
+
+const sortValue = sortSelect.value;
+
+if (sortValue === "newest") {
+    tasks.sort((a, b) => b.id - a.id);
+}
+
+if (sortValue === "oldest") {
+    tasks.sort((a, b) => a.id - b.id);
+}
+
+if (sortValue === "az") {
+    tasks.sort((a, b) => a.title.localeCompare(b.title));
+}
+
+if (sortValue === "za") {
+    tasks.sort((a, b) => b.title.localeCompare(a.title));
 }
 
 if(currentSearch !== ""){
