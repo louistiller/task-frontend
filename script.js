@@ -1,5 +1,5 @@
 const API_URL_ONLINE = "https://task-api-u38p.onrender.com/tasks";
-const API_URL_LOCAL = "http://localhost:8080/tasks";
+const API_URL_LOCAL = "http://192.168.178.110:8080/tasks";
 const local =false;
 const API_URL = local ? API_URL_LOCAL : API_URL_ONLINE;
 const taskList = document.getElementById("taskList");
