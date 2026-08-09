@@ -131,3 +131,47 @@ background-color: #2563eb;
     cursor: pointer;
     width: 120px;
 }
+
+.loading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ccc;
+    border-top-color: #2563eb;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 600px) {
+
+     .container {
+        width: 100%;
+        margin: 0;
+        padding: 20px;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .input-row {
+        flex-direction: column;
+    }
+
+    #addButton {
+        width: 100%;
+    }
+
+    .filters {
+        flex-wrap: wrap;
+    }
+}

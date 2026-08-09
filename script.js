@@ -57,42 +57,76 @@ completedButton.addEventListener("click", function () {
 });
 
 async function addTask(){const title= taskTitle.value;
+    try{
     const response=await fetch(API_URL, {
         method: "POST",
     headers:{"Content-Type":"application/json"}, 
 body: JSON.stringify({title: title})});
 console.log(response.status);
-if(response.ok){
+if(!response.ok){
+throw new Error("Aufgabe konnte nicht erstellt werden");
+}
 taskTitle.value="";
 await loadTasks();
 }
-}
+catch(error){
+    console.error(error);
+    alert("Fehler beim hinzufügen der Aufgabe: " + error.message);
+}}
+
 addButton.addEventListener("click", addTask);
 
 async function deleteTask(id){
+    try{
     const response= await fetch(`${API_URL}/${id}`,{
         method:"DELETE"});
 console.log(response.status);
 
+if(!response.ok){
+    throw new Error("Aufgabe konnte nicht gelöscht werden");
+}
+
 await loadTasks();
+    }
+    catch(error){
+        console.error(error);
+        alert("Fehler beim Löschen der Aufgabe: " + error.message);
+    }
 }
 
 async function updateTask(id, title, completed){
+    try{
 const response= await fetch(`${API_URL}/${id}`,{
     method:"PUT",
     headers:{"Content-Type":"application/json"},
     body: JSON.stringify({title:title, completed:completed})
 });
 console.log(response.status);
-if(response.ok){
+if(!response.ok){
+    throw new Error("Aufgabe konnte nicht aktualisiert werden");
+}
 await loadTasks();
+
+}
+catch(error){
+    console.error(error);
+    alert("Fehler beim Aktualisieren der Aufgabe: " + error.message);
 }
 }
 
 async function loadTasks() {
-
+try{
+    taskList.innerHTML = `
+    <li class="loading">
+        <span class="spinner"></span>
+        Lade Aufgaben...
+    </li>
+`;
     const response = await fetch(`${API_URL}?size=50`);
 
+    if (!response.ok){
+        throw new Error("Fehler beim Laden der Aufgaben");
+    }
     const page = await response.json();
 
     taskList.innerHTML = "";
@@ -166,6 +200,9 @@ actions.classList.add("actions");
     }
 
     console.log(page.content);
-
+}catch(error){
+console.error(error);
+taskList.innerHTML= "<li>Fehler beim Laden der Aufgaben.</li>";
+}
 }
 loadTasks();
