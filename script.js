@@ -18,6 +18,7 @@ const registerButton = document.getElementById("registerButton");
 const loginButton = document.getElementById("loginButton");
 const authContainer = document.querySelector(".auth");
 const appContainer = document.getElementById("app");
+const logoutButton = document.getElementById("logoutButton");
 let currentFilter= "all";
 let currentSearch="";
 
@@ -121,6 +122,30 @@ appContainer.style.display = "block";
 }
 
 loginButton.addEventListener("click", login);
+
+async function logout() {
+    try {
+        const response = await fetch(`${API_BASE}/auth/logout`, {
+            method: "POST",
+            credentials: "include"
+        });
+
+        if (!response.ok) {
+            throw new Error("Logout fehlgeschlagen");
+        }
+
+        appContainer.style.display = "none";
+        authContainer.style.display = "block";
+
+        taskList.innerHTML = "";
+
+    } catch (error) {
+        console.error(error);
+        alert(error.message);
+    }
+}
+
+logoutButton.addEventListener("click", logout);
 
 async function addTask(){const title= taskTitle.value;
     try{
