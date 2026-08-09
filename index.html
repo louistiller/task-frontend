@@ -7,8 +7,18 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <div class="container">
+
+        <div class="auth">
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Passwort">
+
+    <button id="loginButton">Login</button>
+    <button id="registerButton">Registrieren</button>
+</div>
+
+<div id= "app" style="display:none" class="container">
         <h1>Task Manager</h1>
+
         <div class="input-row">
         <input type="text" placeholder="Neue Aufgabe" id="taskTitle">
         <button id="addButton">Hinzufügen</button>

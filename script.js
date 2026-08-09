@@ -1,7 +1,8 @@
-const API_URL_ONLINE = "https://task-api-u38p.onrender.com/tasks";
-const API_URL_LOCAL = "http://192.168.178.110:8080/tasks";
-const local =false;
-const API_URL = local ? API_URL_LOCAL : API_URL_ONLINE;
+const API_BASE_ONLINE = "https://task-api-u38p.onrender.com";
+const API_BASE_LOCAL = "http://192.168.178.110:8080";
+const local = false;
+const API_BASE = local ? API_BASE_LOCAL : API_BASE_ONLINE;
+const API_URL = `${API_BASE}/tasks`;
 const taskList = document.getElementById("taskList");
 const addButton = document.getElementById("addButton")
 const taskTitle= document.getElementById("taskTitle");
@@ -11,6 +12,12 @@ const completedButton = document.getElementById("completedButton");
 const searchInput = document.getElementById("searchInput");
 const searchButton = document.getElementById("searchButton");
 const sortSelect= document.getElementById("sortSelect");
+const usernameInput = document.getElementById("username");
+const passwordInput = document.getElementById("password");
+const registerButton = document.getElementById("registerButton");
+const loginButton = document.getElementById("loginButton");
+const authContainer = document.querySelector(".auth");
+const appContainer = document.getElementById("app");
 let currentFilter= "all";
 let currentSearch="";
 
@@ -56,11 +63,71 @@ completedButton.addEventListener("click", function () {
     loadTasks();
 });
 
+async function register() {
+    try {
+        const response = await fetch(`${API_BASE}/auth/register`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                username: usernameInput.value,
+                password: passwordInput.value
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error("Registrierung fehlgeschlagen");
+        }
+
+        alert("Registrierung erfolgreich");
+
+    } catch (error) {
+        console.error(error);
+        alert(error.message);
+    }
+}
+
+registerButton.addEventListener("click", register);
+
+async function login() {
+    try {
+        const response = await fetch(`${API_BASE}/auth/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "include",
+            body: JSON.stringify({
+                username: usernameInput.value,
+                password: passwordInput.value
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error("Login fehlgeschlagen");
+        }
+
+    authContainer.style.display = "none";
+appContainer.style.display = "block";
+
+        alert("Login erfolgreich");
+        await loadTasks();
+
+    } catch (error) {
+        console.error(error);
+        alert(error.message);
+    }
+}
+
+loginButton.addEventListener("click", login);
+
 async function addTask(){const title= taskTitle.value;
     try{
     const response=await fetch(API_URL, {
         method: "POST",
-    headers:{"Content-Type":"application/json"}, 
+    headers:{"Content-Type":"application/json"},
+    credentials: "include", 
 body: JSON.stringify({title: title})});
 console.log(response.status);
 if(!response.ok){
@@ -79,7 +146,8 @@ addButton.addEventListener("click", addTask);
 async function deleteTask(id){
     try{
     const response= await fetch(`${API_URL}/${id}`,{
-        method:"DELETE"});
+        method:"DELETE",
+    credentials: "include"});
 console.log(response.status);
 
 if(!response.ok){
@@ -99,6 +167,7 @@ async function updateTask(id, title, completed){
 const response= await fetch(`${API_URL}/${id}`,{
     method:"PUT",
     headers:{"Content-Type":"application/json"},
+    credentials: "include",
     body: JSON.stringify({title:title, completed:completed})
 });
 console.log(response.status);
@@ -122,7 +191,9 @@ try{
         Lade Aufgaben...
     </li>
 `;
-    const response = await fetch(`${API_URL}?size=50`);
+    const response = await fetch(`${API_URL}?size=50`, {
+        credentials: "include"
+    });
 
     if (!response.ok){
         throw new Error("Fehler beim Laden der Aufgaben");
@@ -205,4 +276,3 @@ console.error(error);
 taskList.innerHTML= "<li>Fehler beim Laden der Aufgaben.</li>";
 }
 }
-loadTasks();
