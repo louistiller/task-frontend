@@ -301,3 +301,28 @@ console.error(error);
 taskList.innerHTML= "<li>Fehler beim Laden der Aufgaben.</li>";
 }
 }
+
+async function checkSession() {
+    try {
+        const response = await fetch(`${API_BASE}/auth/me`, {
+            credentials: "include"
+        });
+
+        if (!response.ok) {
+            authContainer.style.display = "block";
+            appContainer.style.display = "none";
+            return;
+        }
+
+        authContainer.style.display = "none";
+        appContainer.style.display = "block";
+
+        await loadTasks();
+
+    } catch (error) {
+        authContainer.style.display = "block";
+        appContainer.style.display = "none";
+    }
+}
+
+checkSession();
