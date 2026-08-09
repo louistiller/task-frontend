@@ -165,6 +165,70 @@ background-color: #2563eb;
     }
 }
 
+.auth {
+
+    max-width: 400px;
+
+    margin: 80px auto;
+
+    padding: 30px;
+
+    background-color: white;
+
+    border-radius: 12px;
+
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+
+}
+
+.auth input {
+
+    padding: 12px;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 6px;
+
+    font-size: 16px;
+
+}
+
+.auth button {
+
+    padding: 12px;
+
+    font-size: 16px;
+
+}
+
+#loginButton {
+
+    background-color: #2563eb;
+
+    color: white;
+
+}
+
+#registerButton {
+
+    background-color: #e5e7eb;
+
+}
+
+#logoutButton {
+    background-color: #ef4444;
+    color: white;
+    padding: 8px 14px;
+    margin-bottom: 20px;
+}
+
+
 @media (max-width: 600px) {
 
      .container {

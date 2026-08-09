@@ -1,7 +1,11 @@
 const API_BASE_ONLINE = "/api";
-const API_BASE_LOCAL = "http://192.168.178.110:8080";
+const API_BASE_LOCAL1 = "http://localhost:8080";
+const API_BASE_LOCAL2="http://192.168.178.110:8080";
 const local = false;
-const API_BASE = local ? API_BASE_LOCAL : API_BASE_ONLINE;
+const API_BASE1 = local ? API_BASE_LOCAL1 : API_BASE_ONLINE;
+const API_BASE2= local? API_BASE_LOCAL2 : API_BASE_ONLINE;
+const oneOrTwo= false;
+const API_BASE= oneOrTwo? API_BASE1 : API_BASE2;
 const API_URL = `${API_BASE}/tasks`;
 const taskList = document.getElementById("taskList");
 const addButton = document.getElementById("addButton")
@@ -109,6 +113,8 @@ async function login() {
             throw new Error("Login fehlgeschlagen");
         }
 
+        usernameInput.value = "";
+        passwordInput.value = "";
     authContainer.style.display = "none";
 appContainer.style.display = "block";
 
@@ -135,7 +141,7 @@ async function logout() {
         }
 
         appContainer.style.display = "none";
-        authContainer.style.display = "block";
+        authContainer.style.display = "flex";
 
         taskList.innerHTML = "";
 
@@ -309,7 +315,7 @@ async function checkSession() {
         });
 
         if (!response.ok) {
-            authContainer.style.display = "block";
+            authContainer.style.display = "flex";
             appContainer.style.display = "none";
             return;
         }
@@ -320,7 +326,7 @@ async function checkSession() {
         await loadTasks();
 
     } catch (error) {
-        authContainer.style.display = "block";
+        authContainer.style.display = "flex";
         appContainer.style.display = "none";
     }
 }
