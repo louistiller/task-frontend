@@ -1,4 +1,4 @@
-const API_BASE_ONLINE = "https://task-api-u38p.onrender.com";
+const API_BASE_ONLINE = "/api";
 const API_BASE_LOCAL = "http://192.168.178.110:8080";
 const local = false;
 const API_BASE = local ? API_BASE_LOCAL : API_BASE_ONLINE;
