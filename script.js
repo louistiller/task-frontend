@@ -1,11 +1,7 @@
 const API_BASE_ONLINE = "/api";
-const API_BASE_LOCAL1 = "http://localhost:8080";
-const API_BASE_LOCAL2="http://192.168.178.110:8080";
+const API_BASE_LOCAL = "http://localhost:8080";
 const local = false;
-const API_BASE1 = local ? API_BASE_LOCAL1 : API_BASE_ONLINE;
-const API_BASE2= local? API_BASE_LOCAL2 : API_BASE_ONLINE;
-const oneOrTwo= false;
-const API_BASE= oneOrTwo? API_BASE1 : API_BASE2;
+const API_BASE = local ? API_BASE_LOCAL : API_BASE_ONLINE;
 const API_URL = `${API_BASE}/tasks`;
 const taskList = document.getElementById("taskList");
 const addButton = document.getElementById("addButton")
@@ -25,6 +21,8 @@ const appContainer = document.getElementById("app");
 const logoutButton = document.getElementById("logoutButton");
 let currentFilter= "all";
 let currentSearch="";
+let csrfToken = null;
+let csrfHeaderName = null;
 
 searchButton.addEventListener("click", function () {
     currentSearch=searchInput.value.toLowerCase();
@@ -68,13 +66,37 @@ completedButton.addEventListener("click", function () {
     loadTasks();
 });
 
+async function loadCsrfToken() {
+    const response = await fetch(`${API_BASE}/csrf`, {
+        credentials: "include"
+    });
+
+    if (!response.ok) {
+        throw new Error("CSRF-Token konnte nicht geladen werden");
+    }
+
+    const data = await response.json();
+
+    csrfToken = data.token;
+    csrfHeaderName = data.headerName;
+}
+
+async function ensureCsrfToken() {
+    if (!csrfToken || !csrfHeaderName) {
+        await loadCsrfToken();
+    }
+}
+
 async function register() {
     try {
+        await ensureCsrfToken();
         const response = await fetch(`${API_BASE}/auth/register`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                [csrfHeaderName]: csrfToken
             },
+            credentials: "include",
             body: JSON.stringify({
                 username: usernameInput.value,
                 password: passwordInput.value
@@ -97,10 +119,12 @@ registerButton.addEventListener("click", register);
 
 async function login() {
     try {
+        await ensureCsrfToken();
         const response = await fetch(`${API_BASE}/auth/login`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                [csrfHeaderName]: csrfToken
             },
             credentials: "include",
             body: JSON.stringify({
@@ -131,14 +155,21 @@ loginButton.addEventListener("click", login);
 
 async function logout() {
     try {
+      await ensureCsrfToken();
         const response = await fetch(`${API_BASE}/auth/logout`, {
             method: "POST",
+            headers: {
+                [csrfHeaderName]: csrfToken
+            },
             credentials: "include"
         });
 
         if (!response.ok) {
             throw new Error("Logout fehlgeschlagen");
         }
+
+        csrfToken = null;
+        csrfHeaderName = null;
 
         appContainer.style.display = "none";
         authContainer.style.display = "flex";
@@ -155,9 +186,13 @@ logoutButton.addEventListener("click", logout);
 
 async function addTask(){const title= taskTitle.value;
     try{
+    await ensureCsrfToken();
+
     const response=await fetch(API_URL, {
         method: "POST",
-    headers:{"Content-Type":"application/json"},
+    headers:{"Content-Type":"application/json",
+        [csrfHeaderName]: csrfToken
+    },
     credentials: "include", 
 body: JSON.stringify({title: title})});
 console.log(response.status);
@@ -176,8 +211,12 @@ addButton.addEventListener("click", addTask);
 
 async function deleteTask(id){
     try{
+    await ensureCsrfToken();
     const response= await fetch(`${API_URL}/${id}`,{
         method:"DELETE",
+        headers: {
+                [csrfHeaderName]: csrfToken
+            },
     credentials: "include"});
 console.log(response.status);
 
@@ -195,9 +234,13 @@ await loadTasks();
 
 async function updateTask(id, title, completed){
     try{
+     await ensureCsrfToken();
+
 const response= await fetch(`${API_URL}/${id}`,{
     method:"PUT",
-    headers:{"Content-Type":"application/json"},
+    headers:{"Content-Type":"application/json",
+        [csrfHeaderName]: csrfToken
+    },
     credentials: "include",
     body: JSON.stringify({title:title, completed:completed})
 });
@@ -269,9 +312,10 @@ tasks= tasks.filter(task=> task.title.toLowerCase().includes(searchText));}
     for(const task of tasks){
         const listItem = document.createElement("li");
         listItem.classList.add("task");
+        const titleSpan = document.createElement("span");
+        titleSpan.textContent = task.title;
 if (task.completed) {
-    listItem.classList.add("completed");}
-        listItem.textContent= task.title;
+    titleSpan.classList.add("completed");}
         const deleteButton = document.createElement("button");
         deleteButton.textContent = "Löschen";
         deleteButton.addEventListener("click", () => deleteTask(task.id));
@@ -294,6 +338,7 @@ const actions= document.createElement("div");
 actions.appendChild(deleteButton);
 actions.appendChild(editButton);
         listItem.prepend(completeCheckbox);
+        listItem.appendChild(titleSpan);
         listItem.appendChild(actions);
         taskList.appendChild(listItem);
         deleteButton.classList.add("delete-button");
